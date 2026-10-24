@@ -26,8 +26,9 @@ import { FormsEngineField } from '../components/FormsEngineField';
 import { ControlProps } from '../types';
 import type { ContentItem, MediaItem, Primitive } from '../../../models';
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
+import ListItemButton, { listItemButtonClasses } from '@mui/material/ListItemButton';
 import { FormattedMessage, useIntl } from 'react-intl';
 import LinkOffRoundedIcon from '@mui/icons-material/LinkOffRounded';
 import Tooltip from '@mui/material/Tooltip';
@@ -647,6 +648,10 @@ function NodeSelector(props: NodeSelectorProps) {
 		) : null;
 	const maxLimitReached = value.length >= field.validations.maxCount?.value;
 	const isAddDisabled = readonly || maxLimitReached || (!menuOptions.length && !customActions.length);
+	const addItemsLabel =
+		isAddDisabled && maxLimitReached
+			? formatMessage({ defaultMessage: 'Maximum amount of items reached for {fieldName}' }, { fieldName: field.name })
+			: formatMessage({ defaultMessage: 'Add items to {fieldName}' }, { fieldName: field.name });
 	return (
 		<>
 			<Menu
@@ -751,6 +756,7 @@ function NodeSelector(props: NodeSelectorProps) {
 								disabled={isAddDisabled}
 								size="small"
 								color="primary"
+								aria-label={addItemsLabel}
 								onClick={(event) => {
 									setAddMenuAnchor(event.currentTarget);
 									if (availableOptions.length === 1 && customActions.length === 0) {
@@ -784,11 +790,6 @@ function NodeSelector(props: NodeSelectorProps) {
 							{value.map((item, index) => {
 								const isEmbedded = Boolean(item.component);
 								const Icon = isEmbedded ? DeleteOutlined : LinkOffRoundedIcon;
-								const iconTooltip = isEmbedded ? (
-									<FormattedMessage defaultMessage="Delete" />
-								) : (
-									<FormattedMessage defaultMessage="Unlink" />
-								);
 								const isComponent = isItemComponent(item);
 								const canBeEdited =
 									// Is a component and is embedded or is shared, and user can edit it (has edit action and is not locked)
@@ -803,22 +804,105 @@ function NodeSelector(props: NodeSelectorProps) {
 										itemsByPath[item.include]?.availableActionsMap.edit &&
 										(itemsByPath[item.include]?.lockOwner == null ||
 											user.username === itemsByPath[item.include]?.lockOwner?.username));
+								const itemLabel =
+									(isEmbedded ? item.value : itemsByPath[item.include]?.label || item.value) ||
+									item.include ||
+									String(item.key);
+								const editLabel = formatMessage({ defaultMessage: 'Edit {item}' }, { item: itemLabel });
+								const viewLabel = formatMessage({ defaultMessage: 'View {item}' }, { item: itemLabel });
+								const openLabel = readonly ? viewLabel : editLabel;
+								const removeLabel = isEmbedded
+									? formatMessage({ defaultMessage: 'Delete {item}' }, { item: itemLabel })
+									: formatMessage({ defaultMessage: 'Unlink {item}' }, { item: itemLabel });
+								const moveUpLabel = formatMessage({ defaultMessage: 'Move {name} up' }, { name: itemLabel });
+								const moveDownLabel = formatMessage({ defaultMessage: 'Move {name} down' }, { name: itemLabel });
+								const showMoveButtons = !readonly && value.length > 1;
 								return (
-									<Box
-										component="li"
-										key={`${item.key}-${index}`}
+									<ListItem
+										key={`${item.key}-${index}`} // Including index in the key because there can be duplicate items (same item included more than once)
+										divider={index !== value.length - 1}
+										disablePadding
 										sx={{
-											display: 'flex',
-											alignItems: 'center',
-											borderBottom: index !== value.length - 1 ? 1 : 0,
-											borderColor: 'divider'
+											[`& > .${listItemButtonClasses.root}`]: { pr: showMoveButtons ? '176px' : '112px' }
 										}}
+										secondaryAction={
+											<Box sx={{ display: 'flex' }}>
+												{showMoveButtons && (
+													<>
+														<Tooltip title={<FormattedMessage defaultMessage="Move up" />}>
+															<span>
+																<IconButton
+																	size="small"
+																	disabled={index === 0}
+																	data-reorder-index={index}
+																	data-reorder-control="up"
+																	aria-label={moveUpLabel}
+																	onClick={() => {
+																		const next = destinationIndex('up', false, index, value.length);
+																		if (next == null) {
+																			return;
+																		}
+																		remember(next, 'up');
+																		sortableListActionProcessor('up', false, value, index, setValue);
+																	}}
+																>
+																	<ArrowUpwardRounded fontSize="small" />
+																</IconButton>
+															</span>
+														</Tooltip>
+														<Tooltip title={<FormattedMessage defaultMessage="Move down" />}>
+															<span>
+																<IconButton
+																	size="small"
+																	disabled={index === value.length - 1}
+																	data-reorder-index={index}
+																	data-reorder-control="down"
+																	aria-label={moveDownLabel}
+																	onClick={() => {
+																		const next = destinationIndex('down', false, index, value.length);
+																		if (next == null) {
+																			return;
+																		}
+																		remember(next, 'down');
+																		sortableListActionProcessor('down', false, value, index, setValue);
+																	}}
+																>
+																	<ArrowDownwardRounded fontSize="small" />
+																</IconButton>
+															</span>
+														</Tooltip>
+													</>
+												)}
+												{canBeEdited ? (
+													<Tooltip title={openLabel}>
+														<IconButton
+															size="small"
+															aria-label={openLabel}
+															onClick={(e) => handleEditItem(e, index, !readonly)}
+														>
+															<EditOutlined fontSize="small" />
+														</IconButton>
+													</Tooltip>
+												) : (
+													<Tooltip title={viewLabel}>
+														<IconButton size="small" aria-label={viewLabel} onClick={(e) => handleViewItem(e, index)}>
+															<VisibilityOutlinedIcon fontSize="small" />
+														</IconButton>
+													</Tooltip>
+												)}
+												{!readonly && (
+													<Tooltip title={removeLabel}>
+														<IconButton size="small" aria-label={removeLabel} onClick={(e) => handleRemoveItem(e, index)}>
+															<Icon fontSize="small" />
+														</IconButton>
+													</Tooltip>
+												)}
+											</Box>
+										}
 									>
 										<ListItemButton
-											component="div"
 											data-reorder-index={index}
 											data-reorder-control="row"
-											sx={{ flex: 1 }}
 											onClick={(e) => (canBeEdited ? handleEditItem(e, index, false) : handleViewItem(e, index))}
 											onKeyDown={(e) => handleItemKeyDown(e, index)}
 										>
@@ -851,75 +935,7 @@ function NodeSelector(props: NodeSelectorProps) {
 												}
 											/>
 										</ListItemButton>
-										<Box sx={{ display: 'flex', flexShrink: 0 }}>
-											{!readonly && value.length > 1 && (
-												<>
-													<Tooltip title={<FormattedMessage defaultMessage="Move up" />}>
-														<span>
-															<IconButton
-																size="small"
-																disabled={index === 0}
-																data-reorder-index={index}
-																data-reorder-control="up"
-																aria-label={formatMessage({ defaultMessage: 'Move {name} up' }, { name: item.value })}
-																onClick={() => {
-																	const next = destinationIndex('up', false, index, value.length);
-																	if (next == null) {
-																		return;
-																	}
-																	remember(next, 'up');
-																	sortableListActionProcessor('up', false, value, index, setValue);
-																}}
-															>
-																<ArrowUpwardRounded fontSize="small" />
-															</IconButton>
-														</span>
-													</Tooltip>
-													<Tooltip title={<FormattedMessage defaultMessage="Move down" />}>
-														<span>
-															<IconButton
-																size="small"
-																disabled={index === value.length - 1}
-																data-reorder-index={index}
-																data-reorder-control="down"
-																aria-label={formatMessage({ defaultMessage: 'Move {name} down' }, { name: item.value })}
-																onClick={() => {
-																	const next = destinationIndex('down', false, index, value.length);
-																	if (next == null) {
-																		return;
-																	}
-																	remember(next, 'down');
-																	sortableListActionProcessor('down', false, value, index, setValue);
-																}}
-															>
-																<ArrowDownwardRounded fontSize="small" />
-															</IconButton>
-														</span>
-													</Tooltip>
-												</>
-											)}
-											{canBeEdited ? (
-												<Tooltip title="Edit">
-													<IconButton size="small" onClick={(e) => handleEditItem(e, index, !readonly)}>
-														<EditOutlined fontSize="small" />
-													</IconButton>
-												</Tooltip>
-											) : (
-												<Tooltip title="View">
-													<IconButton size="small" onClick={(e) => handleViewItem(e, index)}>
-														<VisibilityOutlinedIcon fontSize="small" />
-													</IconButton>
-												</Tooltip>
-											)}
-											{!readonly && (
-												<Tooltip title={iconTooltip}>
-													<IconButton size="small" onClick={(e) => handleRemoveItem(e, index)}>
-														<Icon fontSize="small" />
-													</IconButton>
-												</Tooltip>
-											)}
-										</Box>
-									</Box>
+									</ListItem>
 								);
 							})}
 						</List>

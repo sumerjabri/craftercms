@@ -15,6 +15,7 @@
  */
 
 import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import DragIndicatorRounded from '@mui/icons-material/DragIndicatorRounded';
@@ -24,7 +25,6 @@ import IconButton from '@mui/material/IconButton';
 import MoreVertRounded from '@mui/icons-material/MoreVertRounded';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
-import { useIntl } from 'react-intl';
 import { darken, useTheme } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 import { getAvatarWithIconColors } from '../../utils/contentType';
@@ -60,26 +60,16 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 	const theme = useTheme();
 	const { backgroundColor, textColor } = getAvatarWithIconColors(avatarColorBase ?? primaryText, theme, darken);
 	const [over, setOver] = useState(false);
+	// One action matches the options-only clearance. Two actions (insert and options) need a wider slot
+	// so the names stay visible beside both buttons.
+	const secondaryActionCount = (onInsert ? 1 : 0) + (hasMenu ? 1 : 0);
 	return (
-		<ListItemButton
-			role="option"
-			component={ListItem}
-			disableRipple
-			key={secondaryText}
-			draggable
-			onDragStart={onDragStart}
-			onDragEnd={onDragEnd}
+		<ListItem
+			disablePadding
 			onMouseEnter={() => setOver(true)}
 			onMouseLeave={() => setOver(false)}
-			sx={{
-				pl: 1.5,
-				pr: hasMenu ? 6 : undefined,
-				border: `1px solid ${isBeingDragged ? backgroundColor : 'transparent'}`,
-				borderRadius: isBeingDragged ? 2 : 0,
-				cursor: isBeingDragged ? 'grabbing' : 'grab'
-			}}
 			secondaryAction={
-				hasMenu || onInsert ? (
+				secondaryActionCount > 0 ? (
 					<Box sx={{ display: 'flex' }}>
 						{onInsert && (
 							<Tooltip title={formatMessage({ defaultMessage: 'Insert into drop target' })}>
@@ -115,30 +105,46 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 					</Box>
 				) : null
 			}
+			sx={{
+				border: `1px solid ${isBeingDragged ? backgroundColor : 'transparent'}`,
+				borderRadius: isBeingDragged ? 2 : 0
+			}}
 		>
-			<ListItemAvatar sx={{ minWidth: 0 }}>
-				<Avatar
-					alt=""
-					src={avatarSrc}
-					sx={{
-						mr: 1.5,
-						width: 30,
-						height: 30,
-						backgroundColor: over || avatarSrc ? 'transparent' : backgroundColor,
-						transition: 'background-color 0.25s ease-in-out'
-					}}
-				>
-					<DragIndicatorRounded
-						fontSize="small"
+			<ListItemButton
+				disableRipple
+				draggable
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+				sx={{
+					pl: 1.5,
+					pr: secondaryActionCount > 1 ? 12 : secondaryActionCount === 1 ? 6 : undefined,
+					cursor: isBeingDragged ? 'grabbing' : 'grab'
+				}}
+			>
+				<ListItemAvatar sx={{ minWidth: 0 }}>
+					<Avatar
+						alt=""
+						src={avatarSrc}
 						sx={{
-							color: over ? backgroundColor : textColor,
-							transition: 'color 0.25s ease-in-out'
+							mr: 1.5,
+							width: 30,
+							height: 30,
+							backgroundColor: over || avatarSrc ? 'transparent' : backgroundColor,
+							transition: 'background-color 0.25s ease-in-out'
 						}}
-					/>
-				</Avatar>
-			</ListItemAvatar>
-			<ListItemText primary={primaryText} secondary={secondaryText} />
-		</ListItemButton>
+					>
+						<DragIndicatorRounded
+							fontSize="small"
+							sx={{
+								color: over ? backgroundColor : textColor,
+								transition: 'color 0.25s ease-in-out'
+							}}
+						/>
+					</Avatar>
+				</ListItemAvatar>
+				<ListItemText primary={primaryText} secondary={secondaryText} />
+			</ListItemButton>
+		</ListItem>
 	);
 }
 
