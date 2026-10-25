@@ -147,6 +147,11 @@ export function PluginDetailsView(props: PluginDetailsViewProps) {
 							width: '100%',
 							height: '300px',
 							outline: 'none',
+							'&:focus-visible': {
+								outline: '2px solid #000000',
+								outlineOffset: '2px',
+								boxShadow: '0 0 0 2px #FFFFFF'
+							},
 							background: backgroundColor
 						}}
 						autoPlay={play}

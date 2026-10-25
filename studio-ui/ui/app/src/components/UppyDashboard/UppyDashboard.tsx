@@ -476,6 +476,11 @@ export function UppyDashboard(props: UppyDashboardProps) {
 					backgroundColor: 'transparent',
 					outline: 0,
 					border: 0,
+					'&:focus-visible': {
+						outline: '2px solid #000000',
+						outlineOffset: '2px',
+						boxShadow: '0 0 0 2px #FFFFFF'
+					},
 					margin: 0,
 					borderRadius: 0,
 					padding: 0,

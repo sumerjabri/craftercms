@@ -44,6 +44,17 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 		const defaultThemeOptions = createDefaultThemeOptions({ mode });
 		return createTheme({
 			...(props.themeOptions ?? defaultThemeOptions),
+			// WCAG 2.4.7 / 1.4.11. MUI 9 paints this ring only when `focusVisible` is set.
+			// With animations off, `disableRipple` removes the translucent focus fill.
+			// Black outline is 21:1 on white; the white inner ring is 18.73:1 on #121212.
+			// `:where` keeps a more specific component outline in charge.
+			focusVisible: {
+				outlineStyle: 'solid',
+				outlineColor: '#000000',
+				outlineWidth: 2,
+				outlineOffset: 2,
+				boxShadow: '0 0 0 2px #FFFFFF'
+			},
 			// Animations: Disable MUI JavaScript/CSS transition helpers
 			...(!enableAnimations && {
 				transitions: {
@@ -100,7 +111,16 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 						defaultProps: {
 							disableRipple: true
 						}
-					})
+					}),
+					styleOverrides: {
+						root: {
+							'&:where(:focus-visible, .Mui-focusVisible)': {
+								outline: '2px solid #000000',
+								outlineOffset: '2px',
+								boxShadow: '0 0 0 2px #FFFFFF'
+							}
+						}
+					}
 				},
 				MuiInputBase: {
 					styleOverrides: {
@@ -111,14 +131,19 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				},
 				// Animations: Force-disable pure CSS transitions and animations
 				MuiCssBaseline: {
-					...(!enableAnimations && {
-						styleOverrides: {
+					styleOverrides: {
+						...(!enableAnimations && {
 							'*, *::before, *::after': {
 								transition: 'none !important',
 								animation: 'none !important'
 							}
+						}),
+						':where(a, summary):focus-visible': {
+							outline: '2px solid #000000',
+							outlineOffset: '2px',
+							boxShadow: '0 0 0 2px #FFFFFF'
 						}
-					})
+					}
 				}
 			})
 		});

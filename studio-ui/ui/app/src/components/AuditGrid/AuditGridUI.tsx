@@ -358,8 +358,10 @@ export function AuditGridUI(props: AuditGridUIProps) {
 								color: (theme) => theme.palette.primary.main
 							}
 						},
-						'&:focus': {
-							outline: 'none !important'
+						'&:focus, &:focus-visible': {
+							outline: '2px solid #000000',
+							outlineOffset: '-2px',
+							boxShadow: 'inset 0 0 0 1px #FFFFFF'
 						}
 					},
 					[`& .${gridClasses.columnHeaderTitle}`]: {
@@ -369,8 +371,10 @@ export function AuditGridUI(props: AuditGridUIProps) {
 					[`& .${gridClasses.cell}`]: {
 						display: 'flex',
 						alignItems: 'center',
-						'&:focus-within': {
-							outline: 'none !important'
+						'&:focus, &:focus-within': {
+							outline: '2px solid #000000',
+							outlineOffset: '-2px',
+							boxShadow: 'inset 0 0 0 1px #FFFFFF'
 						}
 					}
 				}}

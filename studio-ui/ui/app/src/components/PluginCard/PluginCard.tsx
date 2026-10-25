@@ -225,6 +225,11 @@ function PluginCard(props: PluginCardProps) {
 							width: '100%',
 							height: '180px',
 							outline: 'none',
+							'&:focus-visible': {
+								outline: '2px solid #000000',
+								outlineOffset: '2px',
+								boxShadow: '0 0 0 2px #FFFFFF'
+							},
 							background: backgroundColor
 						}}
 						onPlaying={handlePlay}

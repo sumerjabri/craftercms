@@ -173,6 +173,11 @@
 		border-right: 0 none;
 		outline: 0;
 		font-size: inherit;
+
+		&:focus-visible {
+			outline: 2px solid #000;
+			outline-offset: 1px;
+		}
 		margin: 0;
 		line-height: inherit;
 		padding: 0 6px;
