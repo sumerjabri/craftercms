@@ -892,7 +892,11 @@ function NodeSelector(props: NodeSelectorProps) {
 												)}
 												{!readonly && (
 													<Tooltip title={removeLabel}>
-														<IconButton size="small" aria-label={removeLabel} onClick={(e) => handleRemoveItem(e, index)}>
+														<IconButton
+															size="small"
+															aria-label={removeLabel}
+															onClick={(e) => handleRemoveItem(e, index)}
+														>
 															<Icon fontSize="small" />
 														</IconButton>
 													</Tooltip>
