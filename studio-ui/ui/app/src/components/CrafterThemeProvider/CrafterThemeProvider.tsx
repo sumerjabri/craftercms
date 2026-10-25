@@ -106,7 +106,28 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				MuiFormLabel: {
 					styleOverrides: {
 						asterisk: {
-							color: '#D12E25'
+							// #D12E25 is 5.09:1 on #fff but 3.35:1 on #1C1C1E. Dark mode keeps the lighter error tint (6.03:1).
+							color: prefersDarkMode ? palette.red.tint : '#D12E25'
+						}
+					}
+				},
+				// #242424 on the hover colour (#5755B2, secondary.dark) is 2.47:1. White is 6.27:1 there.
+				MuiButton: {
+					styleOverrides: {
+						root: ({ ownerState }) =>
+							prefersDarkMode && ownerState.variant === 'contained' && ownerState.color === 'secondary'
+								? { '&:hover': { color: '#FFFFFF' } }
+								: {}
+					}
+				},
+				// Switch root is overflow: hidden, so the outset ring is cut off top and bottom. Draw it inside the thumb area.
+				MuiSwitch: {
+					styleOverrides: {
+						switchBase: {
+							'&.Mui-focusVisible': {
+								outlineOffset: '-4px',
+								boxShadow: 'inset 0 0 0 4px #000000'
+							}
 						}
 					}
 				},

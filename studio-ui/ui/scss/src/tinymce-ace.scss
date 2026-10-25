@@ -173,12 +173,6 @@
 		border-right: 0 none;
 		outline: 0;
 		font-size: inherit;
-
-		&:focus-visible {
-			outline: 2px solid #fff;
-			outline-offset: 2px;
-			box-shadow: 0 0 0 2px #000;
-		}
 		margin: 0;
 		line-height: inherit;
 		padding: 0 6px;
@@ -186,6 +180,12 @@
 		vertical-align: top;
 		min-height: 1.8em;
 		box-sizing: content-box;
+
+		&:focus-visible {
+			outline: 2px solid #fff;
+			outline-offset: 2px;
+			box-shadow: 0 0 0 2px #000;
+		}
 	}
 	.ace_searchbtn {
 		border: 1px solid #cbcbcb;

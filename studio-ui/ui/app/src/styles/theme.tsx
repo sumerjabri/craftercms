@@ -62,7 +62,8 @@ export function createDefaultThemeOptions({ mode }: { mode: ThemeOptions['palett
 			MuiTabs: {
 				styleOverrides: {
 					indicator: {
-						backgroundColor: palette.blue.main
+						// palette.blue.main is the light-mode 4.5:1 blue. It is 2.30:1 on a dark dialog (#393939), so dark keeps the tint.
+						backgroundColor: mode === 'dark' ? palette.blue.tint : palette.blue.main
 					}
 				}
 			},

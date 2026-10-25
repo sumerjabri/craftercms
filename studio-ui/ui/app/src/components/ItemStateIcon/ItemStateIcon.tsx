@@ -33,6 +33,10 @@ import { ContentItem, ItemStates } from '../../models/Item';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import { PartialSxRecord } from '../../models';
 import { useIntl } from 'react-intl';
+import { Theme } from '@mui/material/styles';
+
+// Light-mode mains are 4.5:1 on white but only 2.3:1 on a dark dialog; dark mode keeps the tints (5.2:1 or more there).
+const modeColor = (light: string, dark: string) => (theme: Theme) => (theme.palette.mode === 'dark' ? dark : light);
 
 export type ItemStateIconClassKey =
 	| 'root'
@@ -72,7 +76,7 @@ export function ItemStateIcon(props: ItemStateIconProps) {
 			new: {
 				Icon: NewStateIcon,
 				stateSpecificClass: classes?.stateNewIcon,
-				stateSpecificSx: { color: palette.teal.main, ...sxs?.stateNewIcon }
+				stateSpecificSx: { color: modeColor(palette.teal.main, palette.teal.tint), ...sxs?.stateNewIcon }
 			},
 			modified: {
 				Icon: EditedStateIcon,
@@ -87,36 +91,45 @@ export function ItemStateIcon(props: ItemStateIconProps) {
 			locked: {
 				Icon: LockedStateIcon,
 				stateSpecificClass: classes?.stateLockedIcon,
-				stateSpecificSx: { color: palette.orange.main, ...sxs?.stateLockedIcon }
+				stateSpecificSx: { color: modeColor(palette.orange.main, palette.orange.tint), ...sxs?.stateLockedIcon }
 			},
 			systemProcessing: {
 				Icon: SystemProcessingStateIcon,
 				stateSpecificClass: classes?.stateSystemProcessingIcon,
 				stateSpecificSx: {
-					color: palette.indigo.main,
+					// #5856D6 is 2.04:1 on #393939. The tint is 3.35:1 there, 4.94:1 on #1C1C1E, 5.44:1 on #121212.
+					color: modeColor(palette.indigo.main, palette.indigo.tint),
 					...sxs?.stateSystemProcessingIcon
 				}
 			},
 			submitted: {
 				Icon: SubmittedStateIcon,
 				stateSpecificClass: classes?.stateSubmittedIcon,
-				stateSpecificSx: { color: palette.purple.main, ...sxs?.stateSubmittedIcon }
+				stateSpecificSx: {
+					// purple.tint (#8C5CA4) is 2.30:1 on #393939, darker than purple.main (2.80:1).
+					// #B35AE0 is the least lighter mix of #AF52DE that reaches 3:1 there (3.00:1), 4.87:1 on #121212 and 4.42:1 on #1C1C1E.
+					color: modeColor(palette.purple.main, '#B35AE0'),
+					...sxs?.stateSubmittedIcon
+				}
 			},
 			scheduled: {
 				Icon: ScheduledStateIcon,
 				stateSpecificClass: classes?.stateScheduledIcon,
-				stateSpecificSx: { color: palette.green.main, ...sxs?.stateScheduledIcon }
+				stateSpecificSx: { color: modeColor(palette.green.main, palette.green.tint), ...sxs?.stateScheduledIcon }
 			},
 			publishing: {
 				Icon: CloudUploadOutlinedIcon,
 				stateSpecificClass: classes?.statePublishingIcon,
-				stateSpecificSx: { color: palette.indigo.main, ...sxs?.statePublishingIcon }
+				stateSpecificSx: {
+					color: modeColor(palette.indigo.main, palette.indigo.tint),
+					...sxs?.statePublishingIcon
+				}
 			},
 			submittedToStaging: {
 				Icon: item.stateMap.submitted ? SubmittedStateIcon : ScheduledStateIcon,
 				stateSpecificClass: classes?.stateSubmittedToStagingIcon,
 				stateSpecificSx: {
-					color: palette.blue.main,
+					color: modeColor(palette.blue.main, palette.blue.tint),
 					...sxs?.stateSubmittedToStagingIcon
 				}
 			},
@@ -124,7 +137,7 @@ export function ItemStateIcon(props: ItemStateIconProps) {
 				Icon: item.stateMap.submitted ? SubmittedStateIcon : ScheduledStateIcon,
 				stateSpecificClass: classes?.stateSubmittedToLiveIcon,
 				stateSpecificSx: {
-					color: palette.green.main,
+					color: modeColor(palette.green.main, palette.green.tint),
 					...sxs?.stateSubmittedToLiveIcon
 				}
 			},

@@ -26,6 +26,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import {
@@ -95,7 +96,10 @@ function DevContentOpsStats(props: { stats: PublishingStats; sx?: { root: SxProp
 }
 
 export function DevContentOpsDashlet(props: DevContentOpsDashletProps) {
-	const { borderLeftColor = palette.teal.main } = props;
+	const theme = useTheme();
+	// Card paper is #121212 (teal.main 3.72:1, a pass) but the same token is 2.29:1 on dialog paper #393939.
+	// The tint is 11.47:1 on #121212, 10.41:1 on #1C1C1E and 7.07:1 on #393939.
+	const { borderLeftColor = theme.palette.mode === 'dark' ? palette.teal.tint : palette.teal.main } = props;
 	const site = useActiveSiteId();
 	const [{ stats, loading }, setState] = useSpreadState<DevContentOpsDashletState>({
 		stats: null,
