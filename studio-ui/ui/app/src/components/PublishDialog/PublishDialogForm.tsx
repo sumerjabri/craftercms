@@ -369,7 +369,7 @@ export function PublishDialogForm(props: PublishDialogFormProps) {
 							variant="body1"
 							component="span"
 							sx={{
-								border: '1px solid #ced4da',
+								border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? '#CED4DA' : '#8C8C8C'}`,
 								padding: '10px 12px',
 								borderRadius: '4px',
 								width: '100%',

@@ -117,6 +117,11 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 					styleOverrides: {
 						root: {
 							backgroundColor: auxTheme.palette.background.paper
+						},
+						// Default rgba(0,0,0,.23) is 1.74:1 on white. #8C8C8C is 3.36:1 on #fff,
+						// 3.22:1 on #FAFAFA and 3.03:1 on #F3F3F3. #676767 is 3.31:1 on #121212 and 3.01:1 on #1C1C1E.
+						notchedOutline: {
+							borderColor: prefersDarkMode ? '#676767' : '#8C8C8C'
 						}
 					}
 				},
