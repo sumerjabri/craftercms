@@ -15,7 +15,7 @@
  */
 
 import ResizeableDrawer from '../ResizeableDrawer/ResizeableDrawer';
-import React from 'react';
+import React, { useEffect } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -38,10 +38,13 @@ import Paper from '@mui/material/Paper';
 import TranslationOrText from '../../models/TranslationOrText';
 import Suspencified from '../Suspencified/Suspencified';
 import LauncherOpenerButton from '../LauncherOpenerButton';
+import DocumentationLink from '../DocumentationLink';
 import { onSubmittingAndOrPendingChangeProps } from '../../hooks/useEnhancedDialogState';
 import useSelection from '../../hooks/useSelection';
 import { SxProps } from '@mui/system';
 import { Theme } from '@mui/material';
+import SkipToMainContent, { mainLandmarkSx, STUDIO_MAIN_CONTENT_ID } from '../SkipToMainContent';
+import { studioDocumentTitle } from '../../utils/studioDocumentTitle';
 
 export interface Tool {
 	title: TranslationOrText;
@@ -95,7 +98,26 @@ export function SiteTools(props: SiteToolsProps) {
 	} = props;
 	const { formatMessage } = useIntl();
 	const baseUrl = useSelection<string>((state) => state.env.authoringBase);
-	const tool = tools?.find((tool) => tool.url === activeToolId)?.widget;
+	const projectToolsLabel = formatMessage({ id: 'siteTools.title', defaultMessage: 'Project Tools' });
+	const toolNotFoundLabel = formatMessage({ id: 'siteTools.toolNotFound', defaultMessage: 'Tool not found' });
+	const matchedTool = tools?.find((item) => item.url.replace(/^\//, '') === activeToolId.replace(/^\//, ''));
+	const tool = matchedTool?.widget;
+	useEffect(() => {
+		if (mountMode !== 'page') {
+			return;
+		}
+		// The tools reference arrives after the first paint. Don't flash "Tool not found" in the meantime.
+		if (activeToolId && !tools) {
+			return;
+		}
+		const translatedTitle = matchedTool ? getPossibleTranslation(matchedTool.title, formatMessage) : '';
+		const pageTitle = !activeToolId
+			? projectToolsLabel
+			: typeof translatedTitle === 'string' && translatedTitle
+				? translatedTitle
+				: toolNotFoundLabel;
+		document.title = studioDocumentTitle(pageTitle);
+	}, [activeToolId, formatMessage, matchedTool, mountMode, projectToolsLabel, toolNotFoundLabel, tools]);
 	return (
 		<Paper
 			className={props.classes?.root}
@@ -106,7 +128,10 @@ export function SiteTools(props: SiteToolsProps) {
 			}}
 			elevation={0}
 		>
+			<SkipToMainContent />
 			<ResizeableDrawer
+				landmark="nav"
+				landmarkLabel={projectToolsLabel}
 				sxs={{
 					drawerPaper: {
 						position: 'absolute'
@@ -145,26 +170,25 @@ export function SiteTools(props: SiteToolsProps) {
 						{!hideSidebarSiteSwitcher && <SiteSwitcherSelect site={site} fullWidth />}
 					</Box>
 					{tools ? (
-						<Box component="nav" aria-label={formatMessage({ defaultMessage: 'Project tools' })}>
-							<List disablePadding sx={{ overflow: 'auto' }}>
-								{tools.map((tool) => (
-									<ListItem key={tool.url} disablePadding>
-										<ListItemButton
-											selected={`/${tool.url}` === activeToolId}
-											aria-current={`/${tool.url}` === activeToolId ? 'page' : undefined}
-											onClick={() => onNavItemClick(tool.url)}
-										>
-											<ListItemIcon sx={{ minWidth: 36 }}>
-												<SystemIcon icon={tool.icon} svgIconProps={{ fontSize: 'small', color: 'action' }} />
-											</ListItemIcon>
-											<ListItemText primary={getPossibleTranslation(tool.title, formatMessage)} />
-										</ListItemButton>
-									</ListItem>
-								))}
-							</List>
-						</Box>
+						<List disablePadding sx={{ overflow: 'auto' }}>
+							{tools.map((tool) => (
+								<ListItem key={tool.url} disablePadding>
+									<ListItemButton
+										selected={`/${tool.url}` === activeToolId}
+										aria-current={`/${tool.url}` === activeToolId ? 'page' : undefined}
+										onClick={() => onNavItemClick(tool.url)}
+									>
+										<ListItemIcon sx={{ minWidth: 36 }}>
+											<SystemIcon icon={tool.icon} svgIconProps={{ fontSize: 'small', color: 'action' }} />
+										</ListItemIcon>
+										<ListItemText primary={getPossibleTranslation(tool.title, formatMessage)} />
+									</ListItemButton>
+								</ListItem>
+							))}
+						</List>
 					) : (
 						<EmptyState
+							titleComponent="p"
 							title={
 								<FormattedMessage
 									id="siteTools.toolListingNotConfigured"
@@ -199,7 +223,11 @@ export function SiteTools(props: SiteToolsProps) {
 				</Box>
 			</ResizeableDrawer>
 			<Box
+				component="main"
+				id={STUDIO_MAIN_CONTENT_ID}
+				tabIndex={-1}
 				sx={[
+					mainLandmarkSx,
 					{
 						height: '100%',
 						width: '100%',
@@ -235,22 +263,33 @@ export function SiteTools(props: SiteToolsProps) {
 								height: '100%'
 							}}
 						>
-							<Box component="section" sx={{ margin: '10px 12px 0 auto' }}>
+							<Box component="section" sx={{ margin: '10px 12px 0 auto', display: 'flex' }}>
+								<DocumentationLink />
 								<LauncherOpenerButton />
 							</Box>
-							<EmptyState
-								sxs={{ root: { height: '100%', margin: 0 } }}
-								title="404"
-								subtitle={<FormattedMessage id="siteTools.toolNotFound" defaultMessage="Tool not found" />}
-							/>
+							<EmptyState sxs={{ root: { height: '100%', margin: 0 } }} title={toolNotFoundLabel} titleComponent="h1" />
 						</Box>
 					)
 				) : (
-					<EmptyState
-						sxs={{ root: { height: '100%', margin: 0 } }}
-						title={<FormattedMessage id="siteTools.selectTool" defaultMessage="Please choose a tool from the left." />}
-						image={`${baseUrl}/static-assets/images/choose_option.svg`}
-					/>
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							height: '100%'
+						}}
+					>
+						<Box component="section" sx={{ margin: '10px 12px 0 auto', display: 'flex' }}>
+							<DocumentationLink />
+						</Box>
+						<EmptyState
+							sxs={{ root: { height: '100%', margin: 0 } }}
+							title={
+								<FormattedMessage id="siteTools.selectTool" defaultMessage="Please choose a tool from the left." />
+							}
+							titleComponent="h1"
+							image={`${baseUrl}/static-assets/images/choose_option.svg`}
+						/>
+					</Box>
 				)}
 			</Box>
 		</Paper>
