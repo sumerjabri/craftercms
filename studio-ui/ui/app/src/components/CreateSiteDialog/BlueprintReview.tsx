@@ -87,6 +87,10 @@ const messages = defineMessages({
 		id: 'createSiteDialog.token',
 		defaultMessage: 'Token'
 	},
+	showPassword: {
+		id: 'passwordTextField.toggleVisibilityButtonText',
+		defaultMessage: 'Show password'
+	},
 	privateKey: {
 		id: 'createSiteDialog.privateKey',
 		defaultMessage: 'Private Key'
@@ -167,12 +171,9 @@ function BlueprintReview(props: BlueprintReviewProps) {
 								fontSize: '1rem'
 							}
 						}}
-						aria-pressed={Boolean(passwordFields?.[parameter.name])}
 						aria-describedby={blueprintParameterLabelId(parameter.name)}
-						aria-label={formatMessage({
-							id: 'passwordTextField.toggleVisibilityButtonText',
-							defaultMessage: 'Show password'
-						})}
+						aria-label={formatMessage(messages.showPassword)}
+						aria-pressed={Boolean(passwordFields && passwordFields[parameter.name])}
 						onClick={() => {
 							showPassword(parameter);
 						}}

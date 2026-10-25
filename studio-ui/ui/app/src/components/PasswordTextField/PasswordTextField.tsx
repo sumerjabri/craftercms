@@ -15,7 +15,7 @@
  */
 
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
@@ -40,14 +40,11 @@ const PasswordTextField = React.forwardRef<HTMLDivElement, PasswordTextFieldProp
 	const { visibilitySwitch = true, initialVisible = false, sxs, slotProps, ...textFieldProps } = props;
 	const { formatMessage } = useIntl();
 	const [showPassword, setShowPassword] = useState(initialVisible);
-	const inputRef = useRef<HTMLInputElement>(undefined);
+	// A mouse press focuses the button and blurs the field, which closes a caller's strength
+	// popper. Cancelling mousedown leaves focus in the field, so that popper stays open.
+	// Keyboard activation still leaves focus on this button, where aria-pressed is exposed.
 	const handleClickShowPassword = () => {
-		setShowPassword(!showPassword);
-		inputRef.current.focus();
-		setTimeout(() => {
-			const inputLength = inputRef.current.value.length;
-			inputRef.current.setSelectionRange(inputLength, inputLength);
-		}, 0);
+		setShowPassword((visible) => !visible);
 	};
 
 	const visibilityAdornment = (
@@ -57,6 +54,7 @@ const PasswordTextField = React.forwardRef<HTMLDivElement, PasswordTextFieldProp
 				aria-pressed={showPassword}
 				aria-label={formatMessage(translations.toggleVisibilityButtonText)}
 				onClick={handleClickShowPassword}
+				onMouseDown={(event) => event.preventDefault()}
 				size="large"
 			>
 				{showPassword ? <VisibilityOff /> : <Visibility />}
@@ -72,10 +70,6 @@ const PasswordTextField = React.forwardRef<HTMLDivElement, PasswordTextFieldProp
 			type={showPassword ? 'text' : 'password'}
 			slotProps={{
 				...slotProps,
-				htmlInput: {
-					...slotProps?.htmlInput,
-					ref: inputRef
-				},
 				input: visibilitySwitch
 					? {
 							...slotProps?.input,
