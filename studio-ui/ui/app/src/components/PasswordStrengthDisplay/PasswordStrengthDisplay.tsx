@@ -218,7 +218,16 @@ export function PasswordStrengthDisplay(props: PasswordStrengthDisplayProps) {
 									})
 								}}
 							>
-								<ListItemText primary={getDisplayScore(i)} sx={sx.scoreListItemText} />
+								<ListItemText
+									primary={getDisplayScore(i)}
+									sx={sx.scoreListItemText}
+									slotProps={{
+										primary: {
+											// Weight marks a filled segment so the score is not colour alone.
+											sx: { fontWeight: passwordScore >= getDisplayScore(i) ? 700 : 400 }
+										}
+									}}
+								/>
 							</Box>
 						</ListItem>
 					))}

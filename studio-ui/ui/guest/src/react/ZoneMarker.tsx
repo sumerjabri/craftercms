@@ -57,6 +57,7 @@ export interface ZoneMarkerProps {
 	label: string;
 	inherited: boolean;
 	showZoneTooltip?: boolean;
+	hasFailedRequired?: boolean;
 	menuItems?: ReactNode;
 	lockInfo?: Person;
 	isStale?: boolean;
@@ -127,6 +128,7 @@ export function ZoneMarker(props: ZoneMarkerProps) {
 		label,
 		classes,
 		inherited,
+		hasFailedRequired = false,
 		menuItems,
 		showZoneTooltip = true,
 		onPopperClick,
@@ -264,6 +266,11 @@ export function ZoneMarker(props: ZoneMarkerProps) {
 									id="zoneMarker.modifiedItem"
 									defaultMessage="Item was modified. Refresh to enable editing."
 								/>
+							</Typography>
+						)}
+						{hasFailedRequired && !isLockedItem && isEditable && !isStale && (
+							<Typography noWrap variant="body2" component="div">
+								<FormattedMessage id="zoneMarker.required" defaultMessage="Required" />
 							</Typography>
 						)}
 						{menuItems && <Box sx={sx.menuItemsContainer}>{menuItems}</Box>}

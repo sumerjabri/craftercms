@@ -380,7 +380,7 @@ export function PublishDialogForm(props: PublishDialogFormProps) {
 						>
 							{formatMessage(messages[`publishingTarget${publishingTargetsStatus}`])}
 							{publishingTargetsStatus === 'Error' && (
-								<Link href="#" onClick={() => fetchPublishingTargetsFn()}>
+								<Link href="#" underline="always" onClick={() => fetchPublishingTargetsFn()}>
 									<FormattedMessage defaultMessage="retry" />
 								</Link>
 							)}
