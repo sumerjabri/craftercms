@@ -359,9 +359,9 @@ export function AuditGridUI(props: AuditGridUIProps) {
 							}
 						},
 						'&:focus, &:focus-visible': {
-							outline: '2px solid #000000',
+							outline: '2px solid #FFFFFF',
 							outlineOffset: '-2px',
-							boxShadow: 'inset 0 0 0 1px #FFFFFF'
+							boxShadow: 'inset 0 0 0 4px #000000'
 						}
 					},
 					[`& .${gridClasses.columnHeaderTitle}`]: {
@@ -372,9 +372,9 @@ export function AuditGridUI(props: AuditGridUIProps) {
 						display: 'flex',
 						alignItems: 'center',
 						'&:focus, &:focus-within': {
-							outline: '2px solid #000000',
+							outline: '2px solid #FFFFFF',
 							outlineOffset: '-2px',
-							boxShadow: 'inset 0 0 0 1px #FFFFFF'
+							boxShadow: 'inset 0 0 0 4px #000000'
 						}
 					}
 				}}

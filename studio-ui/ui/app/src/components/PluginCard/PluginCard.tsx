@@ -226,9 +226,9 @@ function PluginCard(props: PluginCardProps) {
 							height: '180px',
 							outline: 'none',
 							'&:focus-visible': {
-								outline: '2px solid #000000',
+								outline: '2px solid #FFFFFF',
 								outlineOffset: '2px',
-								boxShadow: '0 0 0 2px #FFFFFF'
+								boxShadow: '0 0 0 2px #000000'
 							},
 							background: backgroundColor
 						}}

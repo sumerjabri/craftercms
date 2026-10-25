@@ -46,14 +46,16 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 			...(props.themeOptions ?? defaultThemeOptions),
 			// WCAG 2.4.7 / 1.4.11. MUI 9 paints this ring only when `focusVisible` is set.
 			// With animations off, `disableRipple` removes the translucent focus fill.
-			// Black outline is 21:1 on white; the white inner ring is 18.73:1 on #121212.
+			// Black sits against the control (4.13:1 or more on every light-mode main, 21:1 on white).
+			// White sits against the page (18.73:1 on #121212, 17.01:1 on #1C1C1E).
+			// The shadow is 4px so an inset ring still shows black inside the 2px white outline.
 			// `:where` keeps a more specific component outline in charge.
 			focusVisible: {
 				outlineStyle: 'solid',
-				outlineColor: '#000000',
+				outlineColor: '#FFFFFF',
 				outlineWidth: 2,
 				outlineOffset: 2,
-				boxShadow: '0 0 0 2px #FFFFFF'
+				boxShadow: '0 0 0 4px #000000'
 			},
 			// Animations: Disable MUI JavaScript/CSS transition helpers
 			...(!enableAnimations && {
@@ -135,9 +137,9 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 					styleOverrides: {
 						root: {
 							'&:where(:focus-visible, .Mui-focusVisible)': {
-								outline: '2px solid #000000',
+								outline: '2px solid #FFFFFF',
 								outlineOffset: '2px',
-								boxShadow: '0 0 0 2px #FFFFFF'
+								boxShadow: '0 0 0 2px #000000'
 							}
 						}
 					}
@@ -159,9 +161,9 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 							}
 						}),
 						':where(a, summary):focus-visible': {
-							outline: '2px solid #000000',
+							outline: '2px solid #FFFFFF',
 							outlineOffset: '2px',
-							boxShadow: '0 0 0 2px #FFFFFF'
+							boxShadow: '0 0 0 2px #000000'
 						}
 					}
 				}
