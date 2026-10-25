@@ -41,7 +41,9 @@ import React, {
 	Suspense,
 	SyntheticEvent,
 	useEffect,
+	useLayoutEffect,
 	useMemo,
+	useRef,
 	useState
 } from 'react';
 import Menu from '@mui/material/Menu';
@@ -209,6 +211,23 @@ function NodeSelector(props: NodeSelectorProps) {
 	const [sortMode, setSortMode] = useState(false);
 	const useTouchSorting = useMemo(() => isTouchDevice(), []);
 	const { rootRef, remember } = useReorderFocus(value);
+	const addButtonRef = useRef<HTMLButtonElement>(null);
+	const fieldBodyRef = useRef<HTMLDivElement>(null);
+	const focusAfterEmptyRemovalRef = useRef(false);
+	useLayoutEffect(() => {
+		if (!focusAfterEmptyRemovalRef.current) {
+			return;
+		}
+		focusAfterEmptyRemovalRef.current = false;
+		const addButton = addButtonRef.current;
+		if (addButton && !addButton.disabled) {
+			addButton.focus({ preventScroll: true });
+			return;
+		}
+		// No row remains, and the add control cannot take focus. Park focus on the field body
+		// (not a tab stop) so the next Tab starts at this field instead of the document body.
+		fieldBodyRef.current?.focus({ preventScroll: true });
+	}, [value]);
 	const handleCancelReorder = () => setSortMode(false);
 	const onReorder = () => setSortMode(true);
 	const itemsByPath = useItemsByPath();
@@ -240,6 +259,12 @@ function NodeSelector(props: NodeSelectorProps) {
 		event.stopPropagation();
 		const nextValue = value.concat();
 		nextValue.splice(index, 1);
+		if (nextValue.length > 0) {
+			// The following row slides into this index, unless the removed row was last.
+			remember(Math.min(index, value.length - 2), 'row');
+		} else {
+			focusAfterEmptyRemovalRef.current = true;
+		}
 		setValue(nextValue);
 	};
 	const handleViewItem = (event: { stopPropagation(): void }, index: number) => {
@@ -752,6 +777,7 @@ function NodeSelector(props: NodeSelectorProps) {
 					>
 						<span>
 							<IconButton
+								ref={addButtonRef}
 								autoFocus={autoFocus}
 								disabled={isAddDisabled}
 								size="small"
@@ -784,7 +810,7 @@ function NodeSelector(props: NodeSelectorProps) {
 						{error.message}
 					</Alert>
 				))}
-				<FieldBox dashed={!hasContent}>
+				<FieldBox ref={fieldBodyRef} tabIndex={-1} dashed={!hasContent}>
 					{hasContent ? (
 						<List dense ref={rootRef}>
 							{value.map((item, index) => {
