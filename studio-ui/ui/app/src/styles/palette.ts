@@ -19,18 +19,23 @@ const palette = {
 	black: '#000',
 	blue: {
 		tint: '#409CFF',
-		main: '#007AFF',
+		// 5.02:1 on #fff, 4.81:1 on #FAFAFA, 4.53:1 on #F3F3F3. Was #007AFF (4.02:1 on #fff).
+		main: '#006BE0',
 		shade: '#0040DD',
 		highlight: 'rgba(0, 122, 255, .1)',
 		highlightHex: '#E6F2FF'
 	},
-	green: { tint: '#30DB5B', main: '#34C759', shade: '#248A3D', highlight: '#EBFAEF' },
+	// green.main 5.05:1 on #fff (was #34C759, 2.22:1). shade 5.05:1 on #fff / 4.55:1 on #F3F3F3 (was #248A3D, 4.40:1 on #fff).
+	green: { tint: '#30DB5B', main: '#217F39', shade: '#217F38', highlight: '#EBFAEF' },
 	indigo: { tint: '#7D7AFF', main: '#5856D6', shade: '#3634A3' },
-	orange: { tint: '#FFB340', main: '#FF9500', shade: '#C93400' },
+	// 5.01:1 on #fff. Was #FF9500 (2.20:1).
+	orange: { tint: '#FFB340', main: '#A35F00', shade: '#C93400' },
 	pink: { tint: '#FF6482', main: '#FF2D55', shade: '#D30F45' },
-	purple: { tint: '#DA8FFF', main: '#AF52DE', shade: '#8944AB' },
+	// tint is light-mode secondary. 5.02:1 on #fff. Was #DA8FFF (2.25:1).
+	purple: { tint: '#8C5CA4', main: '#AF52DE', shade: '#8944AB' },
 	red: { tint: '#FF6961', main: '#FF3B30', shade: '#D70015', highlight: '#FFEBEA' },
-	teal: { tint: '#70D7FF', main: '#5AC8FA', shade: '#0071A4' },
+	// 5.04:1 on #fff. Was #5AC8FA (1.90:1).
+	teal: { tint: '#70D7FF', main: '#357694', shade: '#0071A4' },
 	yellow: { tint: '#FFD426', main: '#FFCC00', shade: '#A05A00', highlight: '#FFFAE6' },
 	gray: {
 		light0: '#FAFAFA',

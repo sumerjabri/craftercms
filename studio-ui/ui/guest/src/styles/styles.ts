@@ -35,9 +35,14 @@ export function useGuestTheme(styleConfig: ThemeOptions): Theme {
 					warning: {
 						main: prefersDarkMode ? palette.orange.tint : palette.orange.main
 					},
-					error: {
-						main: prefersDarkMode ? palette.red.tint : palette.red.main
-					},
+					error: prefersDarkMode
+						? { main: palette.red.tint }
+						: {
+								// Same light-mode error as the studio theme. 5.09:1 on #fff.
+								main: '#D12E25',
+								light: '#DA5750',
+								dark: '#922019'
+							},
 					success: {
 						main: prefersDarkMode ? palette.green.tint : palette.green.main
 					},
@@ -45,7 +50,9 @@ export function useGuestTheme(styleConfig: ThemeOptions): Theme {
 						main: prefersDarkMode ? palette.teal.tint : palette.teal.main
 					},
 					secondary: {
-						main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint
+						main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint,
+						// White on #7D7AFF is 3.44:1. #242424 is 4.51:1.
+						...(prefersDarkMode && { contrastText: '#242424' })
 					}
 				},
 				typography: {

@@ -71,9 +71,15 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				warning: {
 					main: prefersDarkMode ? palette.orange.tint : palette.orange.main
 				},
-				error: {
-					main: prefersDarkMode ? palette.red.tint : palette.red.main
-				},
+				error: prefersDarkMode
+					? { main: palette.red.tint }
+					: {
+							// #FF3B30 is 3.55:1 on #fff. #D12E25 is 5.09:1 on #fff, 4.87:1 on #FAFAFA, 4.58:1 on #F3F3F3.
+							// light/dark match MUI tonalOffset (lighten 0.2 / darken 0.3) from that main.
+							main: '#D12E25',
+							light: '#DA5750',
+							dark: '#922019'
+						},
 				success: {
 					main: prefersDarkMode ? palette.green.tint : palette.green.main
 				},
@@ -81,7 +87,9 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 					main: prefersDarkMode ? palette.teal.tint : palette.teal.main
 				},
 				secondary: {
-					main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint
+					main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint,
+					// #7D7AFF as text is 4.94:1 on #1C1C1E. White on it is 3.44:1; #242424 is 4.51:1.
+					...(prefersDarkMode && { contrastText: '#242424' })
 				},
 				action: {
 					selected: palette.blue.highlight
@@ -93,6 +101,13 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				...props.themeOptions?.palette
 			},
 			components: deepmerge((props.themeOptions ?? defaultThemeOptions).components ?? {}, {
+				MuiFormLabel: {
+					styleOverrides: {
+						asterisk: {
+							color: '#D12E25'
+						}
+					}
+				},
 				MuiLink: {
 					defaultProps: {
 						underline: 'hover'
