@@ -114,6 +114,25 @@ export function createDefaultThemeOptions({ mode }: { mode: ThemeOptions['palett
 					// The tooltip is offset from its trigger. This delay lets the pointer cross that gap.
 					leaveDelay: 200
 				}
+			},
+			// WCAG 2.2 SC 2.5.8. Default IconButton sizes are already at least 24px;
+			// this floor only lifts controls that opt into smaller padding (edit-dialog copy icons are 20px).
+			MuiIconButton: {
+				styleOverrides: {
+					root: {
+						minWidth: 24,
+						minHeight: 24
+					}
+				}
+			},
+			// TinyMCE injects its skin after the app CSS. Split-button carets are 16x28 and
+			// flush against the neighbouring control, so widen the caret itself to 24px.
+			MuiCssBaseline: {
+				styleOverrides: {
+					'.tox .tox-split-button__chevron': {
+						width: '24px !important'
+					}
+				}
 			}
 		}
 	};

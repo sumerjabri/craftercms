@@ -29,6 +29,7 @@ import useUpdateRefs from '../../hooks/useUpdateRefs';
 import { mainLandmarkSx, STUDIO_MAIN_CONTENT_ID } from '../SkipToMainContent';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
+import { PREVIEW_REFLOW_NARROW_QUERY } from '../ToolbarOverflow/previewReflow';
 
 export interface HostProps {
 	heading?: string;
@@ -123,6 +124,21 @@ export function Host(props: HostProps) {
 				// Want to leave 5px margin on the sides where the sidebar is hidden for the shadows to show appreciably.
 				marginLeft: leftSideBarOpen ? `${leftSideBarWidth}px` : '5px',
 				marginRight: rightSideBarOpen ? `${rightSideBarWidth}px` : '5px',
+				minWidth: 0,
+				maxWidth: '100%',
+				[PREVIEW_REFLOW_NARROW_QUERY]: {
+					// Drawers already overlay the shell. Dropping the push-margins keeps the preview
+					// inside the viewport instead of forcing a horizontal scrollbar.
+					marginLeft: '5px',
+					marginRight: '5px',
+					// Do not set width: 100% here. With the 5px margins it makes the box 10px wider than the shell.
+					// The host box is raised above the drawers (zIndex.drawer + 1) so its shadow shows beside an open
+					// sidebar. Once the margins are gone it would sit on top of the drawer and hide the open tools panel.
+					zIndex: 'auto',
+					height: 'auto',
+					maxHeight: 'none',
+					minHeight: '50vh'
+				},
 				transition: eitherSideBarOpen
 					? theme.transitions.create('margin', {
 							easing: theme.transitions.easing.easeOut,
@@ -153,7 +169,12 @@ export function Host(props: HostProps) {
 					border: 'none',
 					margin: 'auto',
 					boxShadow: 3,
-					borderRadius: 3
+					borderRadius: 3,
+					[PREVIEW_REFLOW_NARROW_QUERY]: {
+						width: '100%',
+						height: '50vh',
+						maxWidth: '100%'
+					}
 				}}
 			/>
 		</Box>

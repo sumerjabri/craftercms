@@ -223,7 +223,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 								pb: 0,
 								pr: 0,
 								alignItems: 'center',
-								minHeight: '23.5px',
+								minHeight: '24px',
 								cursor: 'default',
 								'&:hover': {
 									background: 'none'
@@ -256,7 +256,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 					sx={{
 						display: 'flex',
 						alignItems: 'center',
-						minHeight: '23.5px',
+						minHeight: '24px',
 						marginLeft: '100px',
 						'& span': {
 							marginLeft: '10px'
@@ -281,7 +281,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 					sx={{
 						display: 'flex',
 						alignItems: 'center',
-						minHeight: '23.5px',
+						minHeight: '24px',
 						marginLeft: '10px',
 						'& span': {
 							marginLeft: '10px'
@@ -304,7 +304,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 					color: (theme) => theme.palette.text.secondary,
 					display: 'flex',
 					alignItems: 'center',
-					minHeight: '23.5px',
+					minHeight: '24px',
 					marginLeft: '10px',
 					'& svg': {
 						marginRight: '5px',
@@ -343,7 +343,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 							width: '100%',
 							display: 'flex',
 							alignItems: 'center',
-							minHeight: '23.5px',
+							minHeight: '24px',
 							'&:hover': {
 								backgroundColor: (theme) =>
 									theme.palette.mode === 'dark' ? theme.palette.action.hover : theme.palette.grey['A200']
@@ -357,7 +357,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 								root: {
 									flex: 1,
 									minWidth: 0,
-									minHeight: '23.5px'
+									minHeight: '24px'
 								}
 							}}
 							item={item}
@@ -501,7 +501,7 @@ export function PathNavigatorTreeItem(props: PathNavigatorTreeItemProps) {
 						width: '26px',
 						marginRight: 0,
 						'& svg': {
-							fontSize: '23.5px !important',
+							fontSize: '24px !important',
 							color: (theme) => theme.palette.text.secondary
 						}
 					}
