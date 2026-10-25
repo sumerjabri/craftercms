@@ -333,6 +333,7 @@ export const FormsEngineField = forwardRef<HTMLDivElement, FormsEngineFieldProps
 			)}
 			{sourceMap?.[fieldId] && fieldId !== XmlKeys['fileName'] && (
 				<Alert
+					role="note"
 					variant="standard"
 					severity="info"
 					icon={
