@@ -76,6 +76,9 @@ function getStyles(sx: ZoneMarkerPartialSx): ZoneMarkerFullSx {
 			boxSizing: 'border-box',
 			outline: (theme) => `2px solid ${theme.palette.success.main}`,
 			outlineOffset: '-2px',
+			// Black/white inset rings stay visible when the page behind the zone is unknown.
+			// #000 on #fff is 21:1; #fff on #121212 is 18.73:1.
+			boxShadow: 'inset 0 0 0 1px #FFFFFF, inset 0 0 0 3px #000000',
 			textAlign: 'center',
 			position: 'absolute',
 			zIndex: 'tooltip',

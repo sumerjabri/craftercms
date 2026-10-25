@@ -334,7 +334,7 @@ export function UppyDashboard(props: UppyDashboardProps) {
 					position: 'relative'
 				},
 				'& .uppy-dashboard-item-validating': {
-					color: 'rgba(0, 0, 0, 0.54)'
+					color: theme.palette.text.secondary
 				},
 				'& .uppy-dashboard-item-preview': {
 					width: '120px',

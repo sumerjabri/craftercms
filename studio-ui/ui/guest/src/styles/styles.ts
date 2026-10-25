@@ -79,50 +79,53 @@ export const styleSxDefaults: Partial<GuestStylesSx> = {
 		selectModeHighlight: {
 			paper: {
 				bgcolor: 'success.light',
-				color: 'success.contrastText'
+				// contrastText is computed for .main, not .light. #121212 is 4.87:1 on error.light (#DA5750), the darkest chip.
+				color: '#121212'
 			},
 			box: {
-				outlineColor: 'success.light'
+				outlineColor: 'success.main'
 			},
 			icon: {
-				color: 'success.contrastText'
+				color: '#121212'
 			}
 		},
 		moveModeHighlight: {
 			paper: {
 				bgcolor: 'primary.light',
-				color: 'primary.contrastText'
+				color: '#121212'
 			},
 			box: {
-				outlineColor: (theme) => theme.palette.primary.light
+				outlineColor: (theme) => theme.palette.primary.main
 			},
-			icon: {}
+			icon: {
+				color: '#121212'
+			}
 		},
 		errorHighlight: {
 			paper: {
 				bgcolor: 'error.light',
-				color: 'error.contrastText'
+				color: '#121212'
 			},
 			box: {
-				outlineColor: (theme) => theme.palette.error.light
+				outlineColor: (theme) => theme.palette.error.main
 			}
 		},
 		warnHighlight: {
 			paper: {
 				bgcolor: 'warning.light',
-				color: 'warning.contrastText'
+				color: '#121212'
 			},
 			box: {
-				outlineColor: (theme) => theme.palette.warning.light
+				outlineColor: (theme) => theme.palette.warning.main
 			}
 		},
 		disabledHighlight: {
 			paper: {
 				bgcolor: (theme) => theme.palette.grey[400],
-				color: (theme) => theme.palette.getContrastText(theme.palette.grey[400])
+				color: '#121212'
 			},
 			box: {
-				outlineColor: (theme) => theme.palette.grey[400]
+				outlineColor: '#8C8C8C'
 			}
 		}
 	},
