@@ -26,7 +26,7 @@ import MoreVertRounded from '@mui/icons-material/MoreVertRounded';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import { darken, useTheme } from '@mui/material/styles';
-import ListItemButton from '@mui/material/ListItemButton';
+import ListItemButton, { listItemButtonClasses } from '@mui/material/ListItemButton';
 import { getAvatarWithIconColors } from '../../utils/contentType';
 import ListItem from '@mui/material/ListItem';
 
@@ -60,8 +60,7 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 	const theme = useTheme();
 	const { backgroundColor, textColor } = getAvatarWithIconColors(avatarColorBase ?? primaryText, theme, darken);
 	const [over, setOver] = useState(false);
-	// One action matches the options-only clearance. Two actions (insert and options) need a wider slot
-	// so the names stay visible beside both buttons.
+	// One small action fits in MUI's default 48px child-button padding. Two actions need a wider slot.
 	const secondaryActionCount = (onInsert ? 1 : 0) + (hasMenu ? 1 : 0);
 	return (
 		<ListItem
@@ -107,7 +106,10 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 			}
 			sx={{
 				border: `1px solid ${isBeingDragged ? backgroundColor : 'transparent'}`,
-				borderRadius: isBeingDragged ? 2 : 0
+				borderRadius: isBeingDragged ? 2 : 0,
+				// MUI forces padding-right: 48px on the child button via .MuiListItem-root > .MuiListItemButton-root, which
+				// beats the button's own sx. Override it from the ListItem so two actions get a wider slot.
+				...(secondaryActionCount > 1 && { [`& > .${listItemButtonClasses.root}`]: { pr: 12 } })
 			}}
 		>
 			<ListItemButton
@@ -117,7 +119,6 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 				onDragEnd={onDragEnd}
 				sx={{
 					pl: 1.5,
-					pr: secondaryActionCount > 1 ? 12 : secondaryActionCount === 1 ? 6 : undefined,
 					cursor: isBeingDragged ? 'grabbing' : 'grab'
 				}}
 			>
