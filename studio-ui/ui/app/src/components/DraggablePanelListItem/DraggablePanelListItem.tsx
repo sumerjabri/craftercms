@@ -79,7 +79,6 @@ export function DraggablePanelListItem(props: PanelListItemProps) {
 										{ defaultMessage: 'Insert {name} into a drop target' },
 										{ name: primaryText }
 									)}
-									onMouseDown={(event) => event.stopPropagation()}
 									onClick={(event) => {
 										event.stopPropagation();
 										onInsert();
