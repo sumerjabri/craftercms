@@ -14,12 +14,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useLayoutEffect, useRef } from 'react';
 import ViewToolbar from '../ViewToolbar';
 import LauncherOpenerButton from '../LauncherOpenerButton';
 import DocumentationLink from '../DocumentationLink';
 import ToolbarOverflow from '../ToolbarOverflow';
 import { PREVIEW_REFLOW_STICKY_QUERY, PREVIEW_TOOLBAR_WRAP_QUERY } from '../ToolbarOverflow/previewReflow';
+import { bindPreviewToolbarHeight } from '../ToolbarOverflow/bindPreviewToolbarHeight';
 import { closeToolsPanel, initToolbarConfig, openToolsPanel } from '../../state/actions/preview';
 import { useDispatch } from 'react-redux';
 import { defineMessages, useIntl } from 'react-intl';
@@ -54,6 +55,15 @@ export function ToolBar() {
 	const item = useCurrentPreviewItem();
 	const uiConfig = useSiteUIConfig();
 	const theme = useTheme();
+	const toolbarRef = useRef<HTMLDivElement>(null);
+
+	useLayoutEffect(() => {
+		const toolbar = toolbarRef.current;
+		if (!toolbar) {
+			return undefined;
+		}
+		return bindPreviewToolbarHeight(toolbar);
+	}, []);
 
 	useEffect(() => {
 		if (uiConfig.xml && !toolbar.leftSection && !toolbar.middleSection && !toolbar.rightSection) {
@@ -65,6 +75,7 @@ export function ToolBar() {
 		<ViewToolbar
 			component="nav"
 			ariaLabel={formatMessage({ id: 'preview.toolbarLabel', defaultMessage: 'Preview toolbar' })}
+			ref={toolbarRef}
 			sxs={{
 				appBar: {
 					borderBottom: '5px',
