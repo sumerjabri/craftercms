@@ -15,6 +15,7 @@
 	"zoneMarker.lockedBy": "Gesperrt durch {username}",
 	"zoneMarker.modifiedItem": "Dieses Element wurde geändert. Aktualisieren Sie die Seite, um die Bearbeitung zu aktivieren.",
 	"zoneMarker.notEditable": "Nicht bearbeitbar",
+	"zoneMarker.required": "Erforderlich",
 	"zoneMenu.addItem": "Hinzufügen",
 	"zoneMenu.cancel": "Abbrechen (Esc)",
 	"zoneMenu.duplicateItem": "Duplizieren",

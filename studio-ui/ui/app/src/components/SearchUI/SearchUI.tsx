@@ -297,7 +297,9 @@ export function SearchUI(props: SearchUIProps) {
 														component="span"
 														key={content[0] as string}
 														sx={{
-															color: '#FFB400',
+															// #FFB400 is 1.78:1 on white. #926700 is 5.05:1 on #fff, 4.83:1 on #FAFAFA, 4.55:1 on #F3F3F3.
+															// Dark mode keeps #FFB400 (10.51:1 on #121212, 9.54:1 on #1C1C1E).
+															color: (theme) => (theme.palette.mode === 'dark' ? '#FFB400' : '#926700'),
 															marginLeft: '2px'
 														}}
 													>

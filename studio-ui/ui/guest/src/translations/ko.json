@@ -15,6 +15,7 @@
 	"zoneMarker.lockedBy": " {username}님이 잠갔습니다",
 	"zoneMarker.modifiedItem": "항목이 수정되었습니다. 편집하려면 새로고침하세요.",
 	"zoneMarker.notEditable": "수정 불가",
+	"zoneMarker.required": "필수",
 	"zoneMenu.addItem": "새 항목 추가",
 	"zoneMenu.cancel": "취소(Esc)",
 	"zoneMenu.duplicateItem": "중복 항목",

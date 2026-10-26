@@ -67,7 +67,14 @@ export function PasswordRequirementsDisplay(props: PasswordRequirementsDisplayPr
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							color: valid ? palette.green.shade : palette.yellow.shade,
+							color: (theme) =>
+								valid
+									? theme.palette.mode === 'dark'
+										? theme.palette.success.main
+										: palette.green.shade
+									: theme.palette.mode === 'dark'
+										? theme.palette.warning.main
+										: palette.yellow.shade,
 							...sxs?.conditionItem
 						}}
 					>

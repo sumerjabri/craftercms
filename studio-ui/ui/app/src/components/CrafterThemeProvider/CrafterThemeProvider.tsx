@@ -44,6 +44,19 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 		const defaultThemeOptions = createDefaultThemeOptions({ mode });
 		return createTheme({
 			...(props.themeOptions ?? defaultThemeOptions),
+			// WCAG 2.4.7 / 1.4.11. MUI 9 paints this ring only when `focusVisible` is set.
+			// With animations off, `disableRipple` removes the translucent focus fill.
+			// Black sits against the control (4.13:1 or more on every light-mode main, 21:1 on white).
+			// White sits against the page (18.73:1 on #121212, 17.01:1 on #1C1C1E).
+			// The shadow is 4px so an inset ring still shows black inside the 2px white outline.
+			// `:where` keeps a more specific component outline in charge.
+			focusVisible: {
+				outlineStyle: 'solid',
+				outlineColor: '#FFFFFF',
+				outlineWidth: 2,
+				outlineOffset: 2,
+				boxShadow: '0 0 0 4px #000000'
+			},
 			// Animations: Disable MUI JavaScript/CSS transition helpers
 			...(!enableAnimations && {
 				transitions: {
@@ -60,12 +73,15 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				warning: {
 					main: prefersDarkMode ? palette.orange.tint : palette.orange.main
 				},
-				error: {
-					// Light #FF3B30 (palette.red.main) is 3.55:1 on white and 3.40:1 on #FAFAFA.
-					// #D12E25 is 5.09:1 on #fff, 4.87:1 on #FAFAFA (background.default), and 4.58:1 on #F3F3F3.
-					// Dark mode stays palette.red.tint (#FF6961), 6.64:1 on #121212.
-					main: prefersDarkMode ? palette.red.tint : '#D12E25'
-				},
+				error: prefersDarkMode
+					? { main: palette.red.tint }
+					: {
+							// #FF3B30 is 3.55:1 on #fff. #D12E25 is 5.09:1 on #fff, 4.87:1 on #FAFAFA, 4.58:1 on #F3F3F3.
+							// light/dark match MUI tonalOffset (lighten 0.2 / darken 0.3) from that main.
+							main: '#D12E25',
+							light: '#DA5750',
+							dark: '#922019'
+						},
 				success: {
 					main: prefersDarkMode ? palette.green.tint : palette.green.main
 				},
@@ -73,7 +89,9 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 					main: prefersDarkMode ? palette.teal.tint : palette.teal.main
 				},
 				secondary: {
-					main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint
+					main: prefersDarkMode ? palette.indigo.tint : palette.purple.tint,
+					// #7D7AFF as text is 4.94:1 on #1C1C1E. White on it is 3.44:1; #242424 is 4.51:1.
+					...(prefersDarkMode && { contrastText: '#242424' })
 				},
 				action: {
 					selected: palette.blue.highlight
@@ -85,6 +103,34 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				...props.themeOptions?.palette
 			},
 			components: deepmerge((props.themeOptions ?? defaultThemeOptions).components ?? {}, {
+				MuiFormLabel: {
+					styleOverrides: {
+						asterisk: {
+							// #D12E25 is 5.09:1 on #fff but 3.35:1 on #1C1C1E. Dark mode keeps the lighter error tint (6.03:1).
+							color: prefersDarkMode ? palette.red.tint : '#D12E25'
+						}
+					}
+				},
+				// #242424 on the hover colour (#5755B2, secondary.dark) is 2.47:1. White is 6.27:1 there.
+				MuiButton: {
+					styleOverrides: {
+						root: ({ ownerState }) =>
+							prefersDarkMode && ownerState.variant === 'contained' && ownerState.color === 'secondary'
+								? { '&:hover': { color: '#FFFFFF' } }
+								: {}
+					}
+				},
+				// Switch root is overflow: hidden, so the outset ring is cut off top and bottom. Draw it inside the thumb area.
+				MuiSwitch: {
+					styleOverrides: {
+						switchBase: {
+							'&.Mui-focusVisible': {
+								outlineOffset: '-4px',
+								boxShadow: 'inset 0 0 0 4px #000000'
+							}
+						}
+					}
+				},
 				MuiLink: {
 					defaultProps: {
 						underline: 'hover'
@@ -94,6 +140,11 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 					styleOverrides: {
 						root: {
 							backgroundColor: auxTheme.palette.background.paper
+						},
+						// Default rgba(0,0,0,.23) is 1.74:1 on white. #8C8C8C is 3.36:1 on #fff,
+						// 3.22:1 on #FAFAFA and 3.03:1 on #F3F3F3. #676767 is 3.31:1 on #121212 and 3.01:1 on #1C1C1E.
+						notchedOutline: {
+							borderColor: prefersDarkMode ? '#676767' : '#8C8C8C'
 						}
 					}
 				},
@@ -103,7 +154,16 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 						defaultProps: {
 							disableRipple: true
 						}
-					})
+					}),
+					styleOverrides: {
+						root: {
+							'&:where(:focus-visible, .Mui-focusVisible)': {
+								outline: '2px solid #FFFFFF',
+								outlineOffset: '2px',
+								boxShadow: '0 0 0 2px #000000'
+							}
+						}
+					}
 				},
 				MuiInputBase: {
 					styleOverrides: {
@@ -114,14 +174,19 @@ export function CrafterThemeProvider(props: CrafterThemeProviderProps) {
 				},
 				// Animations: Force-disable pure CSS transitions and animations
 				MuiCssBaseline: {
-					...(!enableAnimations && {
-						styleOverrides: {
+					styleOverrides: {
+						...(!enableAnimations && {
 							'*, *::before, *::after': {
 								transition: 'none !important',
 								animation: 'none !important'
 							}
+						}),
+						':where(a, summary):focus-visible': {
+							outline: '2px solid #FFFFFF',
+							outlineOffset: '2px',
+							boxShadow: '0 0 0 2px #000000'
 						}
-					})
+					}
 				}
 			})
 		});

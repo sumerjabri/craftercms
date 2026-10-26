@@ -64,6 +64,7 @@ export function renderActivity(
 			<Link
 				component="button"
 				type="button"
+				underline="always"
 				title={path as string}
 				sx={{ cursor: 'pointer' }}
 				onClick={(e) => onItemClick(previewUrl as unknown as ActivityItem, e)}
@@ -78,6 +79,7 @@ export function renderActivity(
 			<Link
 				component="button"
 				type="button"
+				underline="always"
 				sx={{ cursor: 'pointer' }}
 				onClick={(e) => onPackageClick(activity.package, e)}
 			>

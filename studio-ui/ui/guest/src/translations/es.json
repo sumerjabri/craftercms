@@ -15,6 +15,7 @@
 	"zoneMarker.lockedBy": "Bloqueado por {username}",
 	"zoneMarker.modifiedItem": "El artículo fue modificado. Actualice para habilitar la edición.",
 	"zoneMarker.notEditable": "No editable",
+	"zoneMarker.required": "Necesario",
 	"zoneMenu.addItem": "Agregar ítem nuevo",
 	"zoneMenu.cancel": "Cancelar (esc)",
 	"zoneMenu.duplicateItem": "Artículo duplicado",
